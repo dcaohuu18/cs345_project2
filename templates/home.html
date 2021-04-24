@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block content %}
+    {% for box in boxes %}
+        <article class="media content-section">
+          <div class="media-body">
+            <div class="article-metadata">
+              <a class="mr-2" href="#">{{ box.source }}</a>
+              <small class="text-muted">{{ box.date }}</small>
+            </div>
+            <h2><a class="article-title" href="#">{{ box.title }}</a></h2>
+            <p class="article-content">{{ box.content }}</p>
+          </div>
+        </article>
+    {% endfor %}
+{% endblock content %}
