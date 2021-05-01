@@ -24,6 +24,11 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 500;
 }
 
+.col-md-4 a:hover { /* links on sidebar */
+  color: #333;
+  text-decoration: none;
+}
+
 .content-section {
   background: #ffffff;
   padding: 10px 20px;
@@ -45,10 +50,10 @@ a.article-title:hover {
   white-space: pre-line;
 }
 
-.article-img {
-  height: 65px;
-  width: 65px;
-  margin-right: 16px;
+.article-thumbnail {
+  width: 500px;
+  height: 260px;
+  object-fit: cover;
 }
 
 .article-metadata {
