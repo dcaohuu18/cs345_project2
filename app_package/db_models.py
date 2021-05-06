@@ -28,7 +28,7 @@ class Tag(db.Model):
     is_confirmed = db.Column(db.Boolean, nullable=False)
 
     def __repr__(self):
-        return f"Tag('{self.text}', {'confirmed' if is_confirmed else 'potential'})"
+        return f"Tag('{self.text}', {'confirmed' if self.is_confirmed else 'potential'})"
 
 
 class ArticleTag(db.Model):
