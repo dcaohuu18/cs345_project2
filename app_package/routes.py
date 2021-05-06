@@ -2,7 +2,7 @@ from flask import render_template, url_for, flash, redirect
 from app_package import app
 from app_package.forms import TagManagerForm
 from app_package.db_models import Article, Tag, ArticleTag, ArticleAction, ArticleKeyword
-
+from app_package.scraper import Scraper
 
 boxes = [
     {
@@ -21,6 +21,25 @@ boxes = [
     }
 ]
 
+'''
+def set_up_boxes():
+    article_info_list=[]
+    for story in Article.query.all():
+        article_info = {
+            "source" : story.source,
+            "title" : story.title,
+            "content" : story.description,
+            "thumbnail_url" : story.thumbnail_url,
+            "date" : story.publish_date
+        }
+        article_info_list.append(article_info)
+    return article_info_list
+
+news_scraper = Scraper()
+news_scraper.main()
+
+boxes = set_up_boxes()
+'''
 
 @app.route('/')
 @app.route('/home')
@@ -39,6 +58,6 @@ def tag_manager():
     if tag_manager_form.validate_on_submit():
         flash('Your interest tags were successfully updated!', 'success')
         return redirect(url_for('home')) # redirect to home
-    return render_template('tag_manager.html', 
-                            title='Tag Manager', 
+    return render_template('tag_manager.html',
+                            title='Tag Manager',
                             form=tag_manager_form)

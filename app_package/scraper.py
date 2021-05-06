@@ -29,6 +29,7 @@ class Scraper():
     def write_articles(self, article_collection):
         for tag in article_collection.keys():
             for article in article_collection[tag]:
+                #handles articles that are already in the DB. This implementation updates rather than skips over
                 if len(Article.query.filter_by(url=article["url"]).all())>0:
                     Article.query.filter_by(url=article["url"]).delete()
                 fetched_url = article["url"]
@@ -45,6 +46,7 @@ class Scraper():
                 else:
                     fetched_chars_num = content_length
                 db.session.add(Article(url=fetched_url, source=fetched_source, title=fetched_title, description=fetched_description, thumbnail_url=fetched_thumbnail_url, publish_date=fetched_publish_date, chars_num=fetched_chars_num))
+                #Handles article/tag pairs that are already in the DB. The values are the same, so no need to update.
                 if len(ArticleTag.query.filter_by(article_url=fetched_url, tag_text=str(tag)).all())>0:
                     pass
                 else:
