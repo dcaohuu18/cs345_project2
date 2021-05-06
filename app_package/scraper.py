@@ -11,13 +11,29 @@ class Scraper():
 
     def __init__(self):
         self.newsapi = NewsApiClient(api_key=our_api_key)
+        #100 is maximum. Controls how many articles the API fetches per query.
+        self.page_size = 20
 
     def get_article_raw(self, tags):
         article_collection = {}
+        #provides default articles from top headlines if no active tags
+        if len(tags)==0:
+            article_collection["Top"]=self.get_top_empty()
         for tag in tags:
-            article_collection[tag]=self.newsapi.get_everything(q=tag.text)["articles"]
+            num_of_stories, top_stories = self.get_top_tagged(tag.text)
+            #if there aren't enough top stories for the active tag, supplement with grabbing from all articles
+            if num_of_stories<self.page_size:
+                article_collection[tag]=self.newsapi.get_everything(q=tag.text, page_size=self.page_size)["articles"]+top_stories
+            else:
+                article_collection[tag]=top_stories
         return article_collection
 
+    def get_top_tagged(self, tag):
+        query_result = self.newsapi.get_top_headlines(q=tag, page_size=self.page_size)
+        return query_result["totalResults"], query_result["articles"]
+
+    def get_top_empty(self):
+        return self.newsapi.get_top_headlines(page_size=self.page_size)["articles"]
 
     def get_tags(self):
         return Tag.query.filter_by(is_confirmed=True).all()
@@ -29,9 +45,12 @@ class Scraper():
     def write_articles(self, article_collection):
         for tag in article_collection.keys():
             for article in article_collection[tag]:
-                #handles articles that are already in the DB. This implementation updates rather than skips over
+                #Handles articles that are already in the DB. This implementation updates rather than skips over
                 if len(Article.query.filter_by(url=article["url"]).all())>0:
                     Article.query.filter_by(url=article["url"]).delete()
+                #Some articles don't have a text preview, so this is used to provide one, and prevent content_length from throwing an error.
+                if article["content"]==None:
+                    article["content"]="No Preview Available"
                 fetched_url = article["url"]
                 fetched_source = article["source"]["name"]
                 fetched_author = article["author"]
