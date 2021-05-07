@@ -39,6 +39,6 @@ def tag_manager():
     if tag_manager_form.validate_on_submit():
         flash('Your interest tags were successfully updated!', 'success')
         return redirect(url_for('home')) # redirect to home
-    return render_template('tag_manager.html', 
-                            title='Tag Manager', 
+    return render_template('tag_manager.html',
+                            title='Tag Manager',
                             form=tag_manager_form)
