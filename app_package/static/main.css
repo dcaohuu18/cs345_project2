@@ -1,18 +1,19 @@
 body {
-    background: #fafafa !important;
-    color: #333333 !important;
+    background: #fafafa;
+    color: #333333;
 }
 
 h1, h2, h3, h4, h5, h6 {
-    color: #444444 !important;
+    color: #444444;
 }
 
 .bg-steel {
     background-color: #5f788a;
 }
 
-.site-header .navbar-nav .nav-link {
+.site-header .navbar-nav .nav-link .navbar-brand{
     color: #cbd5db;
+    padding-left: 10px;
 }
 
 .site-header .navbar-nav .nav-link:hover {
