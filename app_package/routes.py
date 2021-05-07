@@ -1,8 +1,8 @@
 from flask import render_template, url_for, flash, redirect
 from app_package import app
 from app_package.forms import TagManagerForm
-from app_package.db_models import Tag, Article
-
+from app_package.db_models import Article, Tag, ArticleTag, ArticleAction, ArticleKeyword
+from app_package.scraper import Scraper
 
 boxes = [
     {
@@ -16,11 +16,30 @@ boxes = [
         'source': 'Washington Post',
         'title': 'News Box 2',
         'content': 'Bezos Bezos news',
-        'thumbnail_url': 'https://www.thecoderpedia.com/wp-content/uploads/2020/06/Coding-Meme-Code-Comments-be-Like-925x1024.jpg?x78269',
+        'thumbnail_url': '/static/default_thumbnail.jpg',
         'date': 'April 22, 2021'
     }
 ]
 
+'''
+def set_up_boxes():
+    article_info_list=[]
+    for story in Article.query.all():
+        article_info = {
+            "source" : story.source,
+            "title" : story.title,
+            "content" : story.description,
+            "thumbnail_url" : story.thumbnail_url,
+            "date" : story.publish_date
+        }
+        article_info_list.append(article_info)
+    return article_info_list
+
+news_scraper = Scraper()
+news_scraper.main()
+
+boxes = set_up_boxes()
+'''
 
 @app.route('/')
 @app.route('/home')
