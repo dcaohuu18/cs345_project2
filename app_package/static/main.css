@@ -11,6 +11,13 @@ h1, h2, h3, h4, h5, h6 {
     background-color: #5f788a;
 }
 
+.site-header {
+    position: fixed; /* Set the top banner to fixed position */
+    top: 0;
+    width: 100%;
+    z-index: 2; /* Set a higher z-index so it stays on top of the content <main> */
+}
+
 .site-header .navbar-nav .nav-link .navbar-brand{
     color: #cbd5db;
     padding-left: 10px;
@@ -22,6 +29,15 @@ h1, h2, h3, h4, h5, h6 {
 
 .site-header .navbar-nav .nav-link.active {
     font-weight: 500;
+}
+
+.navbar {
+    border-radius: 0px;
+}
+
+main {
+  margin-top: 90px; /* Add a top margin to avoid content overlay */
+  z-index: 1;
 }
 
 .col-md-4 a:hover { /* links on sidebar */
@@ -36,6 +52,19 @@ h1, h2, h3, h4, h5, h6 {
     border-radius: 3px;
     margin-bottom: 20px;
 }
+
+.content-section .list-group-item {
+    background-color: #fff;
+}
+
+/* Freeze the sidebar: */
+/*
+.col-md-4 {
+    position: fixed;
+    right: 8%;
+    width: 30%;
+}
+*/
 
 article.media.content-section {
   margin-right: auto;
@@ -94,4 +123,8 @@ a.article-title:hover {
 .tag-container {
     padding: 10px;
     display: flex;
+}
+
+.btn { /* button */
+    border-color: #17a2b8;    
 }

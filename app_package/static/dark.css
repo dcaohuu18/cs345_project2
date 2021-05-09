@@ -28,6 +28,10 @@ h1, h2, h3, h4, h5, h6 {
     border: 1px solid #333333;
 }
 
+.content-section .list-group-item {
+    background-color: #eeeeee;
+}
+
 .article-title {
     color: #aaaaaa;
 }
@@ -41,5 +45,9 @@ a.article-title:hover {
 }
 
 .article-metadata a:hover {
+    color: #999999;
+}
+
+legend {
     color: #999999;
 }
