@@ -72,7 +72,7 @@ class Scraper():
                     db.session.add(ArticleTag(article_url=fetched_url, tag_text=str(tag)))
                 db.session.commit()
 
-    def main(self):
+    def run(self):
         active_tags = self.get_tags()
         articles_with_tags = self.get_article_raw(active_tags)
         self.write_articles(articles_with_tags)
