@@ -1,5 +1,5 @@
 from app_package import db
-from datetime import date
+from datetime import datetime
 
 
 class Article(db.Model):
@@ -12,7 +12,7 @@ class Article(db.Model):
     publish_date = db.Column(db.DateTime)
     chars_num = db.Column(db.Integer)
     is_fake_news = db.Column(db.Boolean, default=False)
-    date_shown = db.Column(db.DateTime, nullable=False, default=date.today())
+    time_shown = db.Column(db.DateTime, nullable=False, default=datetime.now())
 
     # referenced by other tables:
     articleTags = db.relationship('ArticleTag', backref='ArticleTag_article', lazy=True)
@@ -53,7 +53,7 @@ class ArticleAction(db.Model):
     # references Article:
     article_url = db.Column(db.String(2048), db.ForeignKey('article.url'), primary_key=True)
     action = db.Column(db.String(100), primary_key=True)
-    last_update_date = db.Column(db.DateTime, nullable=False, default=date.today())
+    last_update_time = db.Column(db.DateTime, nullable=False, default=datetime.now())
 
     def __repr__(self):
         return f"ArticleAction(article_url: {self.article_url}, action: {self.action})"
