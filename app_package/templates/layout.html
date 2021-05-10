@@ -29,7 +29,7 @@
                 <div class="collapse navbar-collapse" id="navbarToggle">
                     <div class="navbar-nav col-10">
                         <a class="nav-item nav-link" href="{{ url_for('home') }}">Home</a>
-                        <a class="nav-item nav-link" href="{{ url_for('about') }}">About</a>
+                        <a class="nav-item nav-link" href="{{ url_for('tag_manager') }}">Tag Manager</a>
                     </div>
                     <!-- Navbar Right Side -->
                     <div class="navbar-nav col-2">
@@ -69,20 +69,6 @@
                 {% endif %}
                 {% endwith %}
                 {% block content %}{% endblock %}
-            </div>
-            <div class="col-md-4">
-                <div class="content-section">
-                    <h3>Our Sidebar</h3>
-                    <p>You can put any information here you'd like.
-                        <ul class="list-group">
-                            <li class="list-group-item list-group-item-light">Saved</li>
-                            <li class="list-group-item list-group-item-light">
-                                <a href="{{ url_for('tag_manager') }}">Tags Manager</a>
-                            </li>
-                            <li class="list-group-item list-group-item-light">etc</li>
-                        </ul>
-                    </p>
-                </div>
             </div>
         </div>
     </main>
