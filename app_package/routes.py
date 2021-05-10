@@ -1,5 +1,4 @@
 from flask import render_template, url_for, flash, redirect
-from sqlalchemy import exc
 from app_package import app
 from app_package.forms import TagManagerForm
 from app_package import db
@@ -8,47 +7,12 @@ from app_package.scraper import Scraper
 import sys
 
 
-boxes = [
-    {
-        'source': 'New York Times',
-        'title': 'News Box 1',
-        'content': 'Dummy dummy news',
-        'thumbnail_url': 'http://i3.ytimg.com/vi/snAhsXyO3Ck/maxresdefault.jpg',
-        'date': 'April 23, 2021'
-    },
-    {
-        'source': 'Washington Post',
-        'title': 'News Box 2',
-        'content': 'Bezos Bezos news',
-        'thumbnail_url': '/static/default_thumbnail.jpg',
-        'date': 'April 22, 2021'
-    }
-]
-
-'''
-def set_up_boxes():
-    article_info_list=[]
-    for story in Article.query.all():
-        article_info = {
-            "source" : story.source,
-            "title" : story.title,
-            "content" : story.description,
-            "thumbnail_url" : story.thumbnail_url,
-            "date" : story.publish_date
-        }
-        article_info_list.append(article_info)
-    return article_info_list
-
-news_scraper = Scraper()
-news_scraper.main()
-
-boxes = set_up_boxes()
-'''
 
 @app.route('/')
 @app.route('/home')
 def home():
-    return render_template('home.html', boxes=boxes)
+    articles = [article.__dict__ for article in Article.query.order_by(Article.time_shown.desc()).all()]
+    return render_template('home.html', articles=articles)
 
 
 @app.route('/about')
