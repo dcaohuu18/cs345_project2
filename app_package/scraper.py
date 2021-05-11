@@ -17,15 +17,18 @@ class Scraper():
 
     def get_article_raw(self, tags):
         article_collection = {}
+        top_tag = Tag(text="Top", is_confirmed=True)
         #provides default articles from top headlines if no active tags
         if len(tags)==0:
-            article_collection[Tag(text="Top", is_confirmed=True)]=self.get_top_empty()
+            article_collection[top_tag]=self.get_top_empty()
             if Tag(text="Top", is_confirmed=False) in Tag.query.filter_by(text="Top"):
                 Tag.query.filter_by(text="Top").delete()
                 db.session.commit()
-            db.session.add(Tag(text="Top",is_confirmed=True))
+            db.session.add(top_tag)
             db.session.commit()
         for tag in tags:
+            if tag.text=="Top":
+                article_collection[top_tag] = self.get_top_empty()
             num_of_stories, top_stories = self.get_top_tagged(tag.text)
             #if there aren't enough top stories for the active tag, supplement with grabbing from all articles
             if num_of_stories<self.page_size:
