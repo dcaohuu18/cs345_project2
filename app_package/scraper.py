@@ -19,7 +19,12 @@ class Scraper():
         article_collection = {}
         #provides default articles from top headlines if no active tags
         if len(tags)==0:
-            article_collection["Top"]=self.get_top_empty()
+            article_collection[Tag(text="Top", is_confirmed=True)]=self.get_top_empty()
+            if Tag(text="Top", is_confirmed=False) in Tag.query.filter_by(text="Top"):
+                Tag.query.filter_by(text="Top").delete()
+                db.session.commit()
+            db.session.add(Tag(text="Top",is_confirmed=True))
+            db.session.commit()
         for tag in tags:
             num_of_stories, top_stories = self.get_top_tagged(tag.text)
             #if there aren't enough top stories for the active tag, supplement with grabbing from all articles
