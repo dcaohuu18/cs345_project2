@@ -27,6 +27,9 @@ class Tag(db.Model):
     text = db.Column(db.String(500), primary_key=True)
     is_confirmed = db.Column(db.Boolean, nullable=False)
 
+    # referenced by other tables:
+    articleTags = db.relationship('ArticleTag', backref='ArticleTag_tag', lazy=True)
+
     def __repr__(self):
         return f"Tag('{self.text}', {'confirmed' if self.is_confirmed else 'potential'})"
 
