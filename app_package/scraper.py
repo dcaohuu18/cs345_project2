@@ -66,10 +66,10 @@ class Scraper():
                     fetched_chars_num = content_length
                 db.session.add(Article(url=fetched_url, source=fetched_source, title=fetched_title, description=fetched_description, thumbnail_url=fetched_thumbnail_url, publish_date=fetched_publish_date, chars_num=fetched_chars_num))
                 #Handles article/tag pairs that are already in the DB. The values are the same, so no need to update.
-                if len(ArticleTag.query.filter_by(article_url=fetched_url, tag_text=str(tag)).all())>0:
+                if len(ArticleTag.query.filter_by(article_url=fetched_url, tag_text=tag.text).all())>0:
                     pass
                 else:
-                    db.session.add(ArticleTag(article_url=fetched_url, tag_text=str(tag)))
+                    db.session.add(ArticleTag(article_url=fetched_url, tag_text=tag.text))
                 db.session.commit()
 
     def run(self):
