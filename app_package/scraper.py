@@ -13,6 +13,7 @@ class Scraper():
         self.newsapi = NewsApiClient(api_key=our_api_key)
         #100 is maximum. Controls how many articles the API fetches per query.
         self.page_size = 20
+        self.language = "en"
 
     def get_article_raw(self, tags):
         article_collection = {}
@@ -23,20 +24,23 @@ class Scraper():
             num_of_stories, top_stories = self.get_top_tagged(tag.text)
             #if there aren't enough top stories for the active tag, supplement with grabbing from all articles
             if num_of_stories<self.page_size:
-                article_collection[tag]=self.newsapi.get_everything(q=tag.text, page_size=self.page_size)["articles"]+top_stories
+                article_collection[tag]=self.newsapi.get_everything(q=tag.text, page_size=self.page_size, language=self.language)["articles"]+top_stories
             else:
                 article_collection[tag]=top_stories
         return article_collection
 
     def get_top_tagged(self, tag):
-        query_result = self.newsapi.get_top_headlines(q=tag, page_size=self.page_size)
+        query_result = self.newsapi.get_top_headlines(q=tag, page_size=self.page_size, language=self.language)
         return query_result["totalResults"], query_result["articles"]
 
     def get_top_empty(self):
-        return self.newsapi.get_top_headlines(page_size=self.page_size)["articles"]
+        return self.newsapi.get_top_headlines(page_size=self.page_size, language=self.language)["articles"]
 
     def get_tags(self):
         return Tag.query.filter_by(is_confirmed=True).all()
+
+    def get_language(self):
+        return self.language
 
     # TODO: This function will eventually be used to generate keywords from the article, but as that requires a new API, will not be complete for a bit.
     def get_keywords(self):
