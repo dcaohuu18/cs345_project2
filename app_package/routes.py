@@ -50,7 +50,8 @@ def tag_manager():
             
             db.session.commit()
 
-            Scraper().run() # scrape new articles based on the new confirmed tags
+            if added_tags: # is not empty
+                Scraper().run() # scrape new articles based on the new confirmed tags
             flash('Your interest tags were successfully updated!', 'success')
             
             return redirect(url_for('home'))
