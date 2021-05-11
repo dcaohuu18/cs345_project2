@@ -11,7 +11,12 @@ import sys
 @app.route('/')
 @app.route('/home')
 def home():
-    articles = [article.__dict__ for article in Article.query.order_by(Article.time_shown.desc()).all()]
+    # select only articles that have confirmed tags:
+    articles = [a.__dict__ for a in db.session.query(Article
+                                                    ).join(ArticleTag).join(Tag
+                                                    ).filter(Tag.is_confirmed==True
+                                                    ).order_by(Article.time_shown.desc()
+                                                    ).all()]
     return render_template('home.html', articles=articles)
 
 
@@ -22,7 +27,7 @@ def about():
 
 @app.route('/tag-manager', methods=['GET', 'POST'])
 def tag_manager():
-    old_confirmed_tags = [tag.text for tag in Tag.query.filter_by(is_confirmed=True).all()]
+    old_confirmed_tags = {tag.text for tag in Tag.query.filter_by(is_confirmed=True).all()}
 
     tag_manager_form = TagManagerForm()
     # set the preselected to the currently confirmed tags:
@@ -30,16 +35,24 @@ def tag_manager():
     tag_manager_form.tag_input.choices = [(tag, tag) for tag in old_confirmed_tags]
 
     if tag_manager_form.submit.data: # User presses Update
-        new_confirmed_tags = tag_manager_form.tag_input.data
+        new_confirmed_tags = set(tag_manager_form.tag_input.data)
 
         if len(new_confirmed_tags)>0:
-            Tag.query.filter_by(is_confirmed=True).delete() 
-            # remove all confirmed tags and add again:
-            for chosen_tag_text in new_confirmed_tags:
-                db.session.add(Tag(text=chosen_tag_text, is_confirmed=True))
-                db.session.commit()
+            removed_tags = old_confirmed_tags.difference(new_confirmed_tags)
+            # Delete removed_tags from ArticleTag and Tag:
+            db.session.query(ArticleTag).filter(ArticleTag.tag_text.in_(removed_tags)).delete()
+            db.session.query(Tag).filter(Tag.text.in_(removed_tags)).delete()
+
+            added_tags = new_confirmed_tags.difference(old_confirmed_tags)
+            # Insert added_tags to Tag:
+            for add_tag_text in added_tags:
+                db.session.add(Tag(text=add_tag_text, is_confirmed=True))
             
+            db.session.commit()
+
+            Scraper().run() # scrape new articles based on the new confirmed tags
             flash('Your interest tags were successfully updated!', 'success')
+            
             return redirect(url_for('home'))
         
         else:
