@@ -1,16 +1,17 @@
 {% extends "layout.html" %}
 {% block content %}
     <div class="content-section">
-        <form method="POST" action="">
-            {{ form.hidden_tag() }}
+        <form id="tag-manager-form", method="POST" action="">
+            {{ tag_manager_form.hidden_tag() }}
+            <input type="hidden" name="form_name" value="tag_manager_form">
             <fieldset class="form-group">
                 <legend class="border-bottom mb-4">Tell us what you like!</legend>
                 <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
                 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.min.js" crossorigin="anonymous"></script>
-                {{ form.tag_input(data_role="tagsinput")}}
+                {{ tag_manager_form.tag_input(data_role="tagsinput")}}
             </fieldset>
             <div class="form-group">
-                {{ form.submit(class="btn btn-outline-info")}}
+                {{ tag_manager_form.submit(class="btn btn-outline-info")}}
             </div>
         </form>
     </div>
