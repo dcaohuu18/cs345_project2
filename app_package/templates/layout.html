@@ -10,7 +10,11 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.css" crossorigin="anonymous">
+
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+    
+    <!-- theme: light.css or dark.css -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename=theme) }}">
 
     {% if title %}
         <title>News App - {{ title }}</title>
@@ -33,24 +37,11 @@
                     </div>
                     <!-- Navbar Right Side -->
                     <div class="navbar-nav col-2">
-                        <a class="nav-item nav-link" href="#" onclick="DarkThemeToggle()">Dark Theme Toggle</a>
-                        <script>
-                        var theme="Light"
-                        function DarkThemeToggle() {
-                            var link = document.createElement('link');
-                            link.rel = "stylesheet";
-                            link.type = "text/css";
-                            if (theme=="Light") {
-                                link.href = "{{ url_for('static', filename='dark.css') }}";
-                                theme="Dark"
-                            }
-                            else if (theme=="Dark") {
-                                link.href = "{{ url_for('static', filename='main.css') }}";
-                                theme="Light"
-                            }
-                            document.head.appendChild(link);
-                        }
-                        </script>
+                        <span class="nav-item" style="margin-right:8px">Dark Theme</span>
+                        <form id='dark-toggle-form' method="POST" action="">
+                            <input type="hidden" name="form_name" value="dark_toggle_form">
+                            {{ dark_toggle_form.is_dark(onchange="document.getElementById('dark-toggle-form').submit()") }}
+                        </form>
                     </div>
                 </div>
             </div>
