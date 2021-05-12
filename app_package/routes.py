@@ -1,23 +1,50 @@
-from flask import render_template, url_for, flash, redirect
+from flask import render_template, url_for, flash, redirect, request
 from app_package import app
-from app_package.forms import TagManagerForm
+from app_package.forms import TagManagerForm, DarkToggleForm
 from app_package import db
-from app_package.db_models import Article, Tag, ArticleTag, ArticleAction, ArticleKeyword
+from app_package.db_models import Article, Tag, ArticleTag, ArticleAction, ArticleKeyword, DisplayPref
 from app_package.scraper import Scraper
 import sys
 
 
 
-@app.route('/')
-@app.route('/home')
-def home():
+def handle_dark_toggle(theme_obj, dark_toggle_form):
+    # Preset the 'checked' property of the checkbox
+    # This is just how the box is displayed: checked or unchecked
+    # It's not related to the actual value: True or False
+    if theme_obj.value=='dark.css':
+        dark_toggle_form.is_dark.render_kw = {'checked': True}
+
+    # When the form is submitted:
+    # Update the value of theme in the DB based on the checkbox's status:
+    if request.method=='POST' and request.form['form_name']=='dark_toggle_form':
+        if dark_toggle_form.is_dark.data:
+            theme_obj.value = 'dark.css'
+        else:
+            theme_obj.value = 'light.css'
+            # override the 'checked' (display) property of the checkbox:
+            # (for some reason, it renders to 'checked' even though the user just unchecked it)
+            dark_toggle_form.is_dark.render_kw = {'checked': False}
+
+    db.session.commit()
+
+
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/home', methods=['GET', 'POST'])
+def home(): 
     # select only articles that have confirmed tags:
     articles = [a.__dict__ for a in db.session.query(Article
                                                     ).join(ArticleTag).join(Tag
                                                     ).filter(Tag.is_confirmed==True
-                                                    ).order_by(Article.time_shown.desc()
+                                                    ).order_by(Article.time_added.desc()
                                                     ).all()]
-    return render_template('home.html', articles=articles)
+    
+    theme = DisplayPref.query.filter_by(attribute='theme').first()
+    dark_toggle_form = DarkToggleForm()
+
+    handle_dark_toggle(theme, dark_toggle_form)
+    
+    return render_template('home.html', articles=articles, theme=theme.value, dark_toggle_form=dark_toggle_form)
 
 
 @app.route('/about')
@@ -27,6 +54,8 @@ def about():
 
 @app.route('/tag-manager', methods=['GET', 'POST'])
 def tag_manager():
+    # ------------------------
+    # HANDLE TAG INPUT FORM:
     old_confirmed_tags = {tag.text for tag in Tag.query.filter_by(is_confirmed=True).all()}
 
     tag_manager_form = TagManagerForm()
@@ -34,7 +63,7 @@ def tag_manager():
     # note that this accepts a list of tuples: (value, label)
     tag_manager_form.tag_input.choices = [(tag, tag) for tag in old_confirmed_tags]
 
-    if tag_manager_form.submit.data: # User presses Update
+    if request.method=='POST' and request.form['form_name']=='tag_manager_form':
         new_confirmed_tags = set(tag_manager_form.tag_input.data)
 
         if len(new_confirmed_tags)>0:
@@ -59,4 +88,13 @@ def tag_manager():
         else:
             flash('Please enter at least one tag!', 'danger')
 
-    return render_template('tag_manager.html', title='Tag Manager', form=tag_manager_form)
+    # ------------------------
+    # HANDLE DARK THEME TOGGLE:
+    theme = DisplayPref.query.filter_by(attribute='theme').first()
+    dark_toggle_form = DarkToggleForm()
+
+    handle_dark_toggle(theme, dark_toggle_form)
+
+    return render_template('tag_manager.html', title='Tag Manager', theme=theme.value, 
+                            dark_toggle_form=dark_toggle_form, tag_manager_form=tag_manager_form)
+
