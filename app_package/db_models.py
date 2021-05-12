@@ -12,7 +12,7 @@ class Article(db.Model):
     publish_date = db.Column(db.DateTime)
     chars_num = db.Column(db.Integer)
     is_fake_news = db.Column(db.Boolean, default=False)
-    time_shown = db.Column(db.DateTime, nullable=False, default=datetime.now())
+    time_added = db.Column(db.DateTime, nullable=False, default=datetime.now())
 
     # referenced by other tables:
     articleTags = db.relationship('ArticleTag', backref='ArticleTag_article', lazy=True)
@@ -26,6 +26,7 @@ class Article(db.Model):
 class Tag(db.Model):
     text = db.Column(db.String(500), primary_key=True)
     is_confirmed = db.Column(db.Boolean, nullable=False)
+    time_added = db.Column(db.DateTime, nullable=False, default=datetime.now())
 
     # referenced by other tables:
     articleTags = db.relationship('ArticleTag', backref='ArticleTag_tag', lazy=True)
@@ -60,3 +61,11 @@ class ArticleAction(db.Model):
 
     def __repr__(self):
         return f"ArticleAction(article_url: {self.article_url}, action: {self.action})"
+
+
+class DisplayPref(db.Model):
+    attribute = db.Column(db.String(200), primary_key=True)
+    value = db.Column(db.String(500))
+    
+    def __repr__(self):
+        return f"DisplayPref({self.attribute}: {self.value})"
