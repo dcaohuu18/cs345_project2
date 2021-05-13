@@ -37,9 +37,12 @@ Using the news app:
         followed by the time and date published. The top right displays the
         estimated reading time for the article. The main body of the box
         includes a previews thumbnail for the article, the article's title, and
-        a description for the article, if available. Finally, there are options
+        a description for the article, if available. There are options
         to share the article to LinkedIn, Twitter, or Facebook at the bottom of
-        each box.
+        each box. Finally, there's an option so save an article. Checking this
+        box will save the relevant article to the Saved Articles page for you to
+        look back at later. If the article is already saved, unchecking the box
+        will remove the article from the saved articles page.
 
     Tag Manager:
         Use this to specify your interests. Tags are essentially keywords, and
@@ -53,6 +56,11 @@ Using the news app:
         sessions.
 
         You can use the "Top" tag to get generic top stories.
+
+    Saved Articles
+        This page stores your saved articles in the order in which you saved
+        them. It operates essentially the same as the home page, but it will
+        only update when the user adds or removes an article.
 
     Dark Theme:
         Use the check box to toggle dark theme. This setting is saved between

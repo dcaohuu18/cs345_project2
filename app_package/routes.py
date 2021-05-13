@@ -54,11 +54,9 @@ def handle_saving(forms, reload = False):
         if request.method=='POST' and request.form['form_name']==form:
             actioned_article = db.session.query(ArticleAction).filter_by(article_url=request.form['form_name']).first()
             if actioned_article:
-                print("Removed")
                 db.session.query(ArticleAction).filter_by(article_url=request.form['form_name']).delete()
                 forms[form].is_saved.render_kw = {'checked': False}
             else:
-                print("Added")
                 db.session.add(ArticleAction(article_url=request.form['form_name'], action="saved", last_update_time=datetime.now()))
                 forms[form].is_saved.render_kw = {'checked': True}
             db.session.commit()
