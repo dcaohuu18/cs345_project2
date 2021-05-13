@@ -128,3 +128,8 @@ a.article-title:hover {
 .btn { /* button */
     border-color: #17a2b8;    
 }
+
+/* Override the alignment of LinkedIn share btn: */
+.IN-widget {
+  vertical-align: top !important;
+}
