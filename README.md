@@ -10,6 +10,7 @@ Dependencies:
 
 
 Running the news app:
+    This must be run on a local computer, not on a remote server.
 
     Navigate to the app folder and:
 
