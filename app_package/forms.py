@@ -11,3 +11,5 @@ class TagManagerForm(FlaskForm):
     tag_input = SelectMultipleField('Interest tags')
     submit = SubmitField('Update')
 
+class SaveArticleForm(FlaskForm):
+    is_saved = BooleanField('Save Article')

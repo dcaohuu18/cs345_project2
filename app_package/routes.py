@@ -1,6 +1,6 @@
 from flask import render_template, url_for, flash, redirect, request
 from app_package import app
-from app_package.forms import TagManagerForm, DarkToggleForm
+from app_package.forms import TagManagerForm, DarkToggleForm, SaveArticleForm
 from app_package import db
 from app_package.db_models import Article, Tag, ArticleTag, ArticleAction, ArticleKeyword, DisplayPref
 from app_package.scraper import Scraper
@@ -37,10 +37,38 @@ def handle_dark_toggle(theme_obj, dark_toggle_form):
 
     db.session.commit()
 
+def create_save_articles(articles):
+    save_forms = {}
+    for article in articles:
+        save_form = SaveArticleForm(prefix=article["url"])
+        entry = db.session.query(ArticleAction).filter_by(article_url=article["url"]).first()
+        if entry and entry.action=="saved":
+            save_form.is_saved.render_kw = {'checked': True}
+        else:
+            save_form.is_saved.render_kw = {'checked': False}
+        save_forms[article["url"]] = save_form
+    return save_forms
+
+def handle_saving(forms, reload = False):
+    for form in forms:
+        if request.method=='POST' and request.form['form_name']==form:
+            actioned_article = db.session.query(ArticleAction).filter_by(article_url=request.form['form_name']).first()
+            if actioned_article:
+                print("Removed")
+                db.session.query(ArticleAction).filter_by(article_url=request.form['form_name']).delete()
+                forms[form].is_saved.render_kw = {'checked': False}
+            else:
+                print("Added")
+                db.session.add(ArticleAction(article_url=request.form['form_name'], action="saved", last_update_time=datetime.now()))
+                forms[form].is_saved.render_kw = {'checked': True}
+            db.session.commit()
+            if reload:
+                return True
+    return False
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/home', methods=['GET', 'POST'])
-def home(): 
+def home():
     # select only articles that have confirmed tags and were added in the last 3 days:
     articles = [a.__dict__ for a in db.session.query(Article
                                                     ).join(ArticleTag).join(Tag
@@ -48,15 +76,37 @@ def home():
                                                                   Article.time_added>datetime.now()-timedelta(days=3))
                                                     ).order_by(Article.time_added.desc()
                                                     ).all()]
-    
+
     theme = DisplayPref.query.filter_by(attribute='theme').first()
     dark_toggle_form = DarkToggleForm()
-
     handle_dark_toggle(theme, dark_toggle_form)
-    
-    return render_template('home.html', articles=articles, theme=theme.value, 
-                            dark_toggle_form=dark_toggle_form, **jinja_helpers_map)
 
+    save_articles_forms = create_save_articles(articles)
+    handle_saving(save_articles_forms)
+
+    return render_template('home.html', articles=articles, theme=theme.value,
+                            dark_toggle_form=dark_toggle_form, save_articles_forms=save_articles_forms, **jinja_helpers_map)
+
+
+@app.route('/saved', methods=['GET', 'POST'])
+def saved_articles():
+    #select only articles that are in the saved article list, regardless of tag
+    articles = [a.__dict__ for a in db.session.query(Article
+                                                    ).join(ArticleAction
+                                                    ).filter(and_(ArticleAction.action=="saved")
+                                                    ).order_by(ArticleAction.last_update_time.desc()
+                                                    ).all()]
+
+    theme = DisplayPref.query.filter_by(attribute='theme').first()
+    dark_toggle_form = DarkToggleForm()
+    handle_dark_toggle(theme, dark_toggle_form)
+
+    save_articles_forms = create_save_articles(articles)
+    if handle_saving(save_articles_forms,True):
+        return redirect(url_for('saved_articles'))
+
+    return render_template('home.html', articles=articles, theme=theme.value,
+                            dark_toggle_form=dark_toggle_form, save_articles_forms=save_articles_forms, **jinja_helpers_map)
 
 @app.route('/about')
 def about():
@@ -87,15 +137,15 @@ def tag_manager():
             # Insert added_tags to Tag:
             for add_tag_text in added_tags:
                 db.session.add(Tag(text=add_tag_text, is_confirmed=True))
-            
+
             db.session.commit()
 
             if added_tags: # is not empty
                 Scraper().run() # scrape new articles based on the new confirmed tags
             flash('Your interest tags were successfully updated!', 'success')
-            
+
             return redirect(url_for('home'))
-        
+
         else:
             flash('Please enter at least one tag!', 'danger')
 
@@ -106,7 +156,6 @@ def tag_manager():
 
     handle_dark_toggle(theme, dark_toggle_form)
 
-    return render_template('tag_manager.html', title='Tag Manager', theme=theme.value, 
-                            dark_toggle_form=dark_toggle_form, tag_manager_form=tag_manager_form, 
+    return render_template('tag_manager.html', title='Tag Manager', theme=theme.value,
+                            dark_toggle_form=dark_toggle_form, tag_manager_form=tag_manager_form,
                             **jinja_helpers_map)
-

@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.css" crossorigin="anonymous">
 
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
-    
+
     <!-- theme: light.css or dark.css -->
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename=theme) }}">
 
@@ -34,6 +34,7 @@
                     <div class="navbar-nav col-10">
                         <a class="nav-item nav-link" href="{{ url_for('home') }}">Home</a>
                         <a class="nav-item nav-link" href="{{ url_for('tag_manager') }}">Tag Manager</a>
+                        <a class="nav-item nav-link" href="{{ url_for('saved_articles') }}">Saved Articles</a>
                     </div>
                     <!-- Navbar Right Side -->
                     <div class="navbar-nav col-2">

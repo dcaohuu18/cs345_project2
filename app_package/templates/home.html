@@ -18,6 +18,12 @@
               <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-url="{{ article.url}}" data-show-count="false">Tweet</a>
               <iframe src="https://www.facebook.com/plugins/share_button.php?href={{ article.url }}&layout=button_count&size=small&width=89&height=20&appId" width="89" height="20" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
             </div>
+            <div class="save-btn">
+                <form id='{{article.url}}' method="POST" action="">
+                    <input type="hidden" name="form_name" value="{{article.url}}">
+                    Save Article {{ save_articles_forms[article.url].is_saved(onchange='document.getElementById("'+article.url+'").submit()') }}
+                </form>
+            </div>
           </div>
         </article>
     {% endfor %}
