@@ -65,3 +65,8 @@ Using the news app:
     Dark Theme:
         Use the check box to toggle dark theme. This setting is saved between
         sessions.
+
+schedule_jobs.py
+    This file runs in the background and grabs new articles for the active tags
+    each hour as well as being responsible for fetching the initial batch of top
+    stories when first opening the app.
