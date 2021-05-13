@@ -45,7 +45,7 @@ class Scraper():
         return self.newsapi.get_top_headlines(page_size=self.page_size, language=self.language)["articles"]
 
     def get_tags(self):
-        return Tag.query.filter_by(is_confirmed=True).all()
+        return Tag.query.filter_by(is_confirmed=True).order_by(Tag.time_added.desc()).all()
 
     def get_language(self):
         return self.language
