@@ -1,32 +1,36 @@
 {% extends "layout.html" %}
 {% block content %}
-    {% for article in articles %}
-        <article class="media content-section">
-          <div class="media-body">
-            <div class="article-metadata">
-              <a class="mr-2" href="{{ base_url(article.url) }}" target="_blank">{{ article.source }}</a>
-              <small class="text-muted">{{ reformat_datetime(article.publish_date) }}</small>
-              <span class='info-box'>{{ est_read_time(article.chars_num) }}-min read</span>
-            </div>
-            <a href="{{ article.url }}" target="_blank">
-              <img src="{{ article.thumbnail_url }}" class='article-thumbnail'>
-            </a>
-            <h2><a class="article-title" href="{{ article.url }}" target="_blank">{{ article.title }}</a></h2>
-            <p class="article-content">{{ article.description }}</p>
-            <div class='social-media-share-btns'>
-              <script type="IN/Share" data-url="{{ article.url }}"></script>
-              <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-url="{{ article.url}}" data-show-count="false">Tweet</a>
-              <iframe src="https://www.facebook.com/plugins/share_button.php?href={{ article.url }}&layout=button_count&size=small&width=89&height=20&appId" width="89" height="20" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
-            </div>
-            <div class="save-btn">
-                <form id='{{article.url}}' method="POST" action="">
-                    <input type="hidden" name="form_name" value="{{article.url}}">
-                    Save Article {{ save_articles_forms[article.url].is_saved(onchange='document.getElementById("'+article.url+'").submit()') }}
-                </form>
-            </div>
-          </div>
-        </article>
-    {% endfor %}
+    {% if articles| length >0 %}
+        {% for article in articles %}
+            <article class="media content-section">
+              <div class="media-body">
+                <div class="article-metadata">
+                  <a class="mr-2" href="{{ base_url(article.url) }}" target="_blank">{{ article.source }}</a>
+                  <small class="text-muted">{{ reformat_datetime(article.publish_date) }}</small>
+                  <span class='info-box'>{{ est_read_time(article.chars_num) }}-min read</span>
+                </div>
+                <a href="{{ article.url }}" target="_blank">
+                  <img src="{{ article.thumbnail_url }}" class='article-thumbnail'>
+                </a>
+                <h2><a class="article-title" href="{{ article.url }}" target="_blank">{{ article.title }}</a></h2>
+                <p class="article-content">{{ article.description }}</p>
+                <div class='social-media-share-btns'>
+                  <script type="IN/Share" data-url="{{ article.url }}"></script>
+                  <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-url="{{ article.url}}" data-show-count="false">Tweet</a>
+                  <iframe src="https://www.facebook.com/plugins/share_button.php?href={{ article.url }}&layout=button_count&size=small&width=89&height=20&appId" width="89" height="20" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
+                </div>
+                <div class="save-btn">
+                    <form id='{{article.url}}' method="POST" action="">
+                        <input type="hidden" name="form_name" value="{{article.url}}">
+                        Save Article {{ save_articles_forms[article.url].is_saved(onchange='document.getElementById("'+article.url+'").submit()') }}
+                    </form>
+                </div>
+              </div>
+            </article>
+        {% endfor %}
+    {% else %}
+        <legend class="border-bottom mb-4">No Articles Found!</legend>
+    {%endif%}
     <div class='social-media-share-scripts'>
       <script src="https://platform.linkedin.com/in.js" type="text/javascript">lang: en_US</script>
       <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
