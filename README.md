@@ -71,12 +71,3 @@ schedule_jobs.py
     This file runs in the background and grabs new articles for the active tags
     each hour as well as being responsible for fetching the initial batch of top
     stories when first opening the app.
-
-
-Tutorials used:
-
-    [Corey Schafer's Flask Tutorial series](https://www.youtube.com/playlist?list=PL-osiE80TeTs4UjLw5MM6OjgkjFeUxCYH)
-
-News API:
-
-    https://newsapi.org/
