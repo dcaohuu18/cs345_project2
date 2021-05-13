@@ -27,6 +27,7 @@ class Scraper():
             db.session.add(top_tag)
             db.session.commit()
         for tag in tags:
+            #Give the Top tag special behavior
             if tag.text=="Top":
                 article_collection[top_tag] = self.get_top_empty()
             num_of_stories, top_stories = self.get_top_tagged(tag.text)
@@ -38,10 +39,12 @@ class Scraper():
         return article_collection
 
     def get_top_tagged(self, tag):
+        # Gets the API's top articles with specified keywords
         query_result = self.newsapi.get_top_headlines(q=tag, page_size=self.page_size, language=self.language)
         return query_result["totalResults"], query_result["articles"]
 
     def get_top_empty(self):
+        # Gets the API's top articles without any keywords
         return self.newsapi.get_top_headlines(page_size=self.page_size, language=self.language)["articles"]
 
     def get_tags(self):
@@ -49,10 +52,6 @@ class Scraper():
 
     def get_language(self):
         return self.language
-
-    # TODO: This function will eventually be used to generate keywords from the article, but as that requires a new API, will not be complete for a bit.
-    def get_keywords(self):
-        pass
 
     def write_articles(self, article_collection):
         for tag in article_collection.keys():
