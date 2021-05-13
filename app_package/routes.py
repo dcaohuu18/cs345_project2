@@ -38,10 +38,13 @@ def handle_dark_toggle(theme_obj, dark_toggle_form):
     db.session.commit()
 
 def create_save_articles(articles):
+    # Dictionary where keys are urls, and items are form objects
     save_forms = {}
+    # Each article needs a unique form so that they don't interfere with each other
     for article in articles:
         save_form = SaveArticleForm(prefix=article["url"])
         entry = db.session.query(ArticleAction).filter_by(article_url=article["url"]).first()
+        # set the form's display to match the save-status of the relevant article within the DB
         if entry and entry.action=="saved":
             save_form.is_saved.render_kw = {'checked': True}
         else:
@@ -50,16 +53,20 @@ def create_save_articles(articles):
     return save_forms
 
 def handle_saving(forms, reload = False):
-    for form in forms:
-        if request.method=='POST' and request.form['form_name']==form:
-            actioned_article = db.session.query(ArticleAction).filter_by(article_url=request.form['form_name']).first()
-            if actioned_article:
+    # Check each form for
+    for form_url in forms:
+        if request.method=='POST' and request.form['form_name']==form_url:
+            saved_article = db.session.query(ArticleAction).filter_by(article_url=request.form['form_name']).first()
+            # If the article is already saved, remove it and update its form.
+            if saved_article:
                 db.session.query(ArticleAction).filter_by(article_url=request.form['form_name']).delete()
-                forms[form].is_saved.render_kw = {'checked': False}
+                forms[form_url].is_saved.render_kw = {'checked': False}
             else:
                 db.session.add(ArticleAction(article_url=request.form['form_name'], action="saved", last_update_time=datetime.now()))
-                forms[form].is_saved.render_kw = {'checked': True}
+                forms[form_url].is_saved.render_kw = {'checked': True}
             db.session.commit()
+            # This is for the saved articles page. Requires a reload in order to
+            # reflect changes to saved articles.
             if reload:
                 return True
     return False
@@ -95,11 +102,17 @@ def saved_articles():
                                                     ).order_by(ArticleAction.last_update_time.desc()
                                                     ).all()]
 
+    #------------------------
+    # HANDLE DARK THEME FORM:
     theme = DisplayPref.query.filter_by(attribute='theme').first()
     dark_toggle_form = DarkToggleForm()
     handle_dark_toggle(theme, dark_toggle_form)
 
+    # -----------------------------
+    # HANDLE ARTICLE SAVING FORMS:
     save_articles_forms = create_save_articles(articles)
+    #checks for changes in save-status and reloads the page when there are to
+    #reflect those changes
     if handle_saving(save_articles_forms,True):
         return redirect(url_for('saved_articles'))
 
