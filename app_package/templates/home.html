@@ -1,9 +1,5 @@
 {% extends "layout.html" %}
 {% block content %}
-    <div class='social-media-share-scripts'>
-      <script src="https://platform.linkedin.com/in.js" type="text/javascript">lang: en_US</script>
-      <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-    </div>
     {% for article in articles %}
         <article class="media content-section">
           <div class="media-body">
@@ -24,4 +20,8 @@
           </div>
         </article>
     {% endfor %}
+    <div class='social-media-share-scripts'>
+      <script src="https://platform.linkedin.com/in.js" type="text/javascript">lang: en_US</script>
+      <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+    </div>
 {% endblock content %}
