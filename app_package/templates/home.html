@@ -4,8 +4,9 @@
         <article class="media content-section">
           <div class="media-body">
             <div class="article-metadata">
-              <a class="mr-2" href="#">{{ article.source }}</a>
-              <small class="text-muted">{{ article.date }}</small>
+              <a class="mr-2" href="{{ base_url(article.url) }}" target="_blank">{{ article.source }}</a>
+              <small class="text-muted">{{ reformat_datetime(article.publish_date) }}</small>
+              <span class='info-box'>{{ est_read_time(article.chars_num) }}-min read</span>
             </div>
             <a href="{{ article.url }}" target="_blank">
               <img src="{{ article.thumbnail_url }}" class='article-thumbnail'>
