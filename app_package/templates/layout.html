@@ -38,10 +38,13 @@
                     </div>
                     <!-- Navbar Right Side -->
                     <div class="navbar-nav col-2">
-                        <span class="nav-item" style="margin-right:8px">Dark Theme</span>
+                        <span class="nav-item", style="margin-right:8px; margin-top:2px; color:#fefff1">Dark Theme</span>
                         <form id='dark-toggle-form' method="POST" action="">
                             <input type="hidden" name="form_name" value="dark_toggle_form">
-                            {{ dark_toggle_form.is_dark(onchange="document.getElementById('dark-toggle-form').submit()") }}
+                            <label class="toggle-switch">
+                                {{ dark_toggle_form.is_dark(onchange="document.getElementById('dark-toggle-form').submit()") }}
+                                <span class="toggle-slider"></span>
+                            </label>
                         </form>
                     </div>
                 </div>
