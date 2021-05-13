@@ -4,8 +4,17 @@ from app_package.forms import TagManagerForm, DarkToggleForm
 from app_package import db
 from app_package.db_models import Article, Tag, ArticleTag, ArticleAction, ArticleKeyword, DisplayPref
 from app_package.scraper import Scraper
+from app_package.jinja_helper_funcs import reformat_datetime, base_url, est_read_time
+from datetime import datetime, timedelta
+from sqlalchemy import and_, or_, not_
 import sys
 
+
+jinja_helpers_map = {
+    'reformat_datetime': reformat_datetime,
+    'base_url': base_url,
+    'est_read_time': est_read_time
+}
 
 
 def handle_dark_toggle(theme_obj, dark_toggle_form):
@@ -32,10 +41,11 @@ def handle_dark_toggle(theme_obj, dark_toggle_form):
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/home', methods=['GET', 'POST'])
 def home(): 
-    # select only articles that have confirmed tags:
+    # select only articles that have confirmed tags and were added in the last 3 days:
     articles = [a.__dict__ for a in db.session.query(Article
                                                     ).join(ArticleTag).join(Tag
-                                                    ).filter(Tag.is_confirmed==True
+                                                    ).filter(and_(Tag.is_confirmed==True,
+                                                                  Article.time_added>datetime.now()-timedelta(days=3))
                                                     ).order_by(Article.time_added.desc()
                                                     ).all()]
     
@@ -44,7 +54,8 @@ def home():
 
     handle_dark_toggle(theme, dark_toggle_form)
     
-    return render_template('home.html', articles=articles, theme=theme.value, dark_toggle_form=dark_toggle_form)
+    return render_template('home.html', articles=articles, theme=theme.value, 
+                            dark_toggle_form=dark_toggle_form, **jinja_helpers_map)
 
 
 @app.route('/about')
@@ -96,5 +107,6 @@ def tag_manager():
     handle_dark_toggle(theme, dark_toggle_form)
 
     return render_template('tag_manager.html', title='Tag Manager', theme=theme.value, 
-                            dark_toggle_form=dark_toggle_form, tag_manager_form=tag_manager_form)
+                            dark_toggle_form=dark_toggle_form, tag_manager_form=tag_manager_form, 
+                            **jinja_helpers_map)
 
